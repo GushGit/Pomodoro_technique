@@ -110,8 +110,16 @@ function start_pmdr {
     current_break=$short_break
     current_work=$work
     notification=$popup_start$work" minutes."
-    notify "$notification"
     while [[ $full_time -gt 0 ]]; do
+        if [[ $full_time -le $((work+current_break)) ]]; then
+            current_work=$full_time;
+            notification=$popup_last_stretch$current_work" minutes!"
+        else
+            notification=$popup_continue$current_work" minutes."
+        fi
+
+        notify "$notification"
+
         play_phase_sfx 0
         configure_music "-u $popups -v $volume -p $playlist"
 
@@ -135,19 +143,6 @@ function start_pmdr {
 
         sleep $((current_break * speed_debug))
         full_time=$((full_time-current_break))
-
-        if [[ $full_time -le 0 ]]; then
-            break;
-        fi
-
-        if [[ $full_time -le $((work+current_break)) ]]; then
-            current_work=$((work+current_break));
-            notification=$popup_last_stretch$current_work" minutes!"
-        else
-            notification=$popup_continue$current_work" minutes."
-        fi
-
-        notify "$notification"
     done
     play_phase_sfx 3
     notify "$popup_end"
