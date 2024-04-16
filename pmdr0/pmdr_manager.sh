@@ -1,6 +1,8 @@
 #!/bin/bash
 #shellcheck disable=SC1091
 #shellcheck disable=SC2001
+#shellcheck disable=SC2046
+#shellcheck disable=SC2181
 source ./template_manager.sh
 source ./player.sh
 

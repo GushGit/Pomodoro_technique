@@ -3,8 +3,10 @@
 #shellcheck disable=SC2010
 #shellcheck disable=SC2017
 #shellcheck disable=SC2027
+#shellcheck disable=SC2046
 #shellcheck disable=SC2086
 #shellcheck disable=SC2143
+#shellcheck disable=SC2181
 source ./math_utils.sh
 
 FULL_SEP="="
