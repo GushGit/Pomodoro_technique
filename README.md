@@ -34,5 +34,10 @@ And, also, here are some commands that might already be built-in, but are listed
 - `sleep`   (thread management)
 - many others, which I don't care enough to list
 
-There is a flag, that can be used when starting program from terminal:
+There are flags, that can be used when starting program from terminal:
 > `-d`: enables "debug-mode", which turns every minute of waiting into a second. Very useful for testing, while customising source code.
+> `-f`: enables "fast-customizing-mode", which turns off the error messages shown, when input is an empty string. Instead of forcing user to enter correct value it will just substitute parameter with its default value. List of default values:
+- full=120 (here and further time is in minutes)
+- work=30
+- short_break=5
+- long_break=10
