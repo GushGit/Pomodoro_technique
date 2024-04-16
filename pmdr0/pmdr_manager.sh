@@ -2,24 +2,28 @@
 #shellcheck disable=SC1091
 #shellcheck disable=SC2001
 #shellcheck disable=SC2046
+#shellcheck disable=SC2086
 #shellcheck disable=SC2181
 source ./template_manager.sh
 source ./player.sh
 
+export debug_flag
+export fast_flag
+
 TITLE="pmdr0"
-TEMPLATES_DB="./data/templates/"
+export TEMPLATES_DB
 
 speed_debug=60
 
 # Separators for extracting info from templates
-FULL_SEP="="
-BREAK_SEP="+"
-LONG_SHORT_SEP="|"
-PLAYER_SEP="&"
-VOLUME_SEP="%"
-POPUPS_SEP="!"
+export FULL_SEP
+export BREAK_SEP
+export LONG_SHORT_SEP
+export PLAYER_SEP
+export VOLUME_SEP
+export POPUPS_SEP
 
-# Mode related parameters
+# Current work parameters
 mode="default"
 full_time=$NULL
 work=$NULL
@@ -61,18 +65,21 @@ function use_template {
                 sed -e "s/.*$POPUPS_SEP//")
 }
 
-function set_up_work_mode { 
-    if [[ $1 -eq 1 ]]; then
+function set_up_work_mode {
+    if [[ $debug_flag -eq 1 ]]; then
         speed_debug=1
     fi
-    
+
     kdialog --yesno "Do you want to use existing template, or set up your own work mode?" \
-                    --yes-label "New template" \
-                    --no-label "Use existing"
+            --yes-label "New template" \
+            --no-label "Use existing"
     
-    if [[ $? -eq 0 ]]; then
-        create_new_template $speed_debug
-    fi
+    case $? in 
+        0) 
+            create_new_template;;
+        2)
+            exit 1;;
+    esac
     
     while [[ -n $0 ]]; do
         mode=$(kdialog \

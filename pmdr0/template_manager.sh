@@ -9,6 +9,10 @@
 #shellcheck disable=SC2181
 source ./math_utils.sh
 
+export debug_flag
+export fast_flag
+
+# Separators
 FULL_SEP="="
 BREAK_SEP="+"
 LONG_SHORT_SEP="|"
@@ -16,10 +20,12 @@ PLAYER_SEP="&"
 VOLUME_SEP="%"
 POPUPS_SEP="!"
 
+# Config & databases constants
 TEMPLATES_DB="./data/templates/"
 PLAYLISTS="./playlists/"
 NA_ALERT_FLAG=0
 
+# Templates' parameters
 template=$NULL
 name=$NULL
 full_time=$NULL
@@ -89,8 +95,13 @@ function get_full_time {
         fi
 
         if [[ -z $tmp ]]; then
-            kdialog --error "Time cannot be null!"
-            continue
+            if [[ $fast_flag -eq 1 ]]; then
+                full_time=120
+                return
+            else
+                kdialog --error "Time cannot be null!"
+                continue
+            fi
         fi
 
         if [[ -n ${tmp//[0-9]/} ]]; then
@@ -135,8 +146,13 @@ function get_work_time {
         fi
 
         if [[ -z $tmp ]]; then
-            kdialog --error "Time cannot be null!"
-            continue
+            if [[ $fast_flag -eq 1 ]]; then
+                work=30
+                return
+            else
+                kdialog --error "Time cannot be null!"
+                continue
+            fi
         fi
 
         if [[ -n ${tmp//[0-9]/} ]]; then
@@ -181,8 +197,13 @@ function get_short_break {
         fi
 
         if [[ -z $tmp ]]; then
-            kdialog --error "Time cannot be null!"
-            continue
+            if [[ $fast_flag -eq 1 ]]; then
+                short_break=5
+                return
+            else
+                kdialog --error "Time cannot be null!"
+                continue
+            fi
         fi
 
         if [[ -n ${tmp//[0-9]/} ]]; then
@@ -227,8 +248,13 @@ function get_long_break {
         fi
 
         if [[ -z $tmp ]]; then
-            kdialog --error "Time cannot be null!"
-            continue
+            if [[ $fast_flag -eq 1 ]]; then
+                long_break=10
+                return
+            else
+                kdialog --error "Time cannot be null!"
+                continue
+            fi
         fi
 
         if [[ -n ${tmp//[0-9]/} ]]; then
