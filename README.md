@@ -40,4 +40,4 @@ There are flags, that can be used when starting program from terminal:
 - full=120 (here and further time is in minutes)
 - work=30
 - short_break=5
-- long_break=10
+- long_break=15

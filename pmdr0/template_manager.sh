@@ -249,7 +249,7 @@ function get_long_break {
 
         if [[ -z $tmp ]]; then
             if [[ $fast_flag -eq 1 ]]; then
-                long_break=10
+                long_break=15
                 return
             else
                 kdialog --error "Time cannot be null!"
