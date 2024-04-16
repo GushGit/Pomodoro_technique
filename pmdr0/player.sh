@@ -115,5 +115,7 @@ function play_phase_sfx {
             play $SFX_LONG;;
         "3")
             play $SFX_END;;
+        "*")
+            echo "$0 received unconventional arguement, exiting..."; exit;;
     esac&
 }

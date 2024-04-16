@@ -29,9 +29,27 @@ playlist=$NULL
 volume=$NULL
 popups=0
 
+#TODO: use the same thingy that Bobr user - "_=$(($1=$(($1 + 1))))" 
+
 function get_name {
     while [[ -n $0 ]]; do
         tmp=$(kdialog --inputbox "Name your template.")
+
+        if [[ $? -ne 0 ]]; then
+            kdialog --warningyesno "Are you sure, you want to quit?"
+            exitcode=$?
+            case $exitcode in
+                0) 
+                    exit 1;;
+                *)
+                    continue;;
+            esac
+        fi
+        
+        if [[ -z $tmp ]]; then
+            kdialog --error "Template name cannot be null!"
+            continue
+        fi
 
         if [[ -n "$(ls $TEMPLATES_DB | grep $tmp)" ]]; then
             kdialog --warningyesno \
@@ -52,6 +70,27 @@ function get_name {
 function get_full_time {
     while [[ -n $0 ]]; do
         tmp=$(kdialog --inputbox "Enter full time for your work, in minutes. \n30~300 minutes is ideal")
+
+        if [[ $? -ne 0 ]]; then
+            kdialog --warningyesno "Are you sure, you want to quit?"
+            exitcode=$?
+            case $exitcode in
+                0) 
+                    exit 1;;
+                *)
+                    continue;;
+            esac
+        fi
+
+        if [[ -z $tmp ]]; then
+            kdialog --error "Time cannot be null!"
+            continue
+        fi
+
+        if [[ -n ${tmp//[0-9]/} ]]; then
+            kdialog --error "Please, only input positive integer numbers!"
+            continue;
+        fi
 
         is_bounded "$tmp" 30 300
         if [[ $? -eq 1 && $NA_ALERT_FLAG -eq 0 ]]; then
@@ -78,6 +117,27 @@ function get_work_time {
     while [[ -n $0 ]]; do
         tmp=$(kdialog --inputbox "Enter time for one work period. \n25~45 minutes is ideal")
 
+        if [[ $? -ne 0 ]]; then
+            kdialog --warningyesno "Are you sure, you want to quit?"
+            exitcode=$?
+            case $exitcode in
+                0) 
+                    exit 1;;
+                *)
+                    continue;;
+            esac
+        fi
+
+        if [[ -z $tmp ]]; then
+            kdialog --error "Time cannot be null!"
+            continue
+        fi
+
+        if [[ -n ${tmp//[0-9]/} ]]; then
+            kdialog --error "Please, only input positive integer numbers!"
+            continue;
+        fi
+
         is_bounded "$tmp" 25 45
         if [[ $? -eq 1 ]]; then
             kdialog --warningyesnocancel \
@@ -103,6 +163,27 @@ function get_short_break {
     while [[ -n $0 ]]; do
         tmp=$(kdialog --inputbox "Enter time for short break. \n5~10 minutes is ideal")
 
+        if [[ $? -ne 0 ]]; then
+            kdialog --warningyesno "Are you sure, you want to quit?"
+            exitcode=$?
+            case $exitcode in
+                0) 
+                    exit 1;;
+                *)
+                    continue;;
+            esac
+        fi
+
+        if [[ -z $tmp ]]; then
+            kdialog --error "Time cannot be null!"
+            continue
+        fi
+
+        if [[ -n ${tmp//[0-9]/} ]]; then
+            kdialog --error "Please, only input positive integer numbers!"
+            continue;
+        fi
+
         is_bounded "$tmp" 5 10
         if [[ $? -eq 1 ]]; then
             kdialog --warningyesnocancel \
@@ -127,6 +208,27 @@ function get_short_break {
 function get_long_break {
     while [[ -n $0 ]]; do
         tmp=$(kdialog --inputbox "Enter time for long break. \n15~25 minutes is ideal")
+
+        if [[ $? -ne 0 ]]; then
+            kdialog --warningyesno "Are you sure, you want to quit?"
+            exitcode=$?
+            case $exitcode in
+                0) 
+                    exit 1;;
+                *)
+                    continue;;
+            esac
+        fi
+
+        if [[ -z $tmp ]]; then
+            kdialog --error "Time cannot be null!"
+            continue
+        fi
+
+        if [[ -n ${tmp//[0-9]/} ]]; then
+            kdialog --error "Please, only input positive integer numbers!"
+            continue;
+        fi
 
         is_bounded "$tmp" 15 25
         if [[ $? -eq 1 ]]; then
@@ -156,6 +258,7 @@ function get_playlist {
                     --combobox "Choose playlist for while you're working: " \
                     $(ls playlists))
     exitcode=$?
+    
     # Setting lofi as default
     if [[ exitcode -ne 0 || $playlist == "" ]]; then
         playlist="lofi"

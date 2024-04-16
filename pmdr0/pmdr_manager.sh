@@ -78,8 +78,9 @@ function set_up_work_mode {
         mode=$(kdialog \
                     --combobox "Choose a template to use" \
                     $(ls -1 $TEMPLATES_DB))
-        if [[ $? -ne 0 ]]; then
-            if [[ -z $mode ]]; then
+        if [[ $? -eq 0 ]]; then
+        echo $mode
+            if [[ -f "./data/templates/$mode" ]]; then
                 use_template "$mode"
                 break
             else
@@ -98,7 +99,6 @@ function notify () {
         --title "$TITLE" \
         --passivepopup "$@"
 }
-
 
 function start_pmdr {
     current_break=$short_break
@@ -144,7 +144,7 @@ function start_pmdr {
 
         notify "$notification"
     done
-    play_sfx 3
+    play_phase_sfx 3
     notify "$popup_end"
     kdialog --imgbox astolfo.jpg
 }
