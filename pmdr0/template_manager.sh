@@ -15,6 +15,7 @@ VOLUME_SEP="%"
 POPUPS_SEP="!"
 
 TEMPLATES_DB="./data/templates/"
+PLAYLISTS="./playlists/"
 NA_ALERT_FLAG=0
 
 template=$NULL
@@ -45,6 +46,13 @@ function get_name {
         if [[ -z $tmp ]]; then
             kdialog --error "Template name cannot be null!"
             continue
+        fi
+
+        if [[ -n ${tmp//[A-z]/} ]]; then
+            kdialog --warningyesno "It is better to have only alphabetical symbols in the template name. \nContinue anyway?"
+            if [[ $? -ne 0 ]]; then
+                continue;
+            fi
         fi
 
         if [[ -n "$(ls $TEMPLATES_DB | grep $tmp)" ]]; then
@@ -135,7 +143,7 @@ function get_work_time {
         fi
 
         is_bounded "$tmp" 25 45
-        if [[ $? -eq 1 && $NA_ALERT_FLAG -ne 0 ]]; then
+        if [[ $? -eq 1 && $NA_ALERT_FLAG -eq 0 ]]; then
             kdialog --warningyesnocancel \
             "Work period less, than 25 minutes, or more, than 45 minutes, is not advised. \nContinue anyway?" \
             --yes-label "Continue" \
@@ -181,7 +189,7 @@ function get_short_break {
         fi
 
         is_bounded "$tmp" 5 10
-        if [[ $? -eq 1  && $NA_ALERT_FLAG -ne 0 ]]; then
+        if [[ $? -eq 1  && $NA_ALERT_FLAG -eq 0 ]]; then
             kdialog --warningyesnocancel \
             "Short break less, than 5 minutes, or more, than 10 minutes, is not advised. \nContinue anyway?" \
             --yes-label "Continue" \
@@ -227,7 +235,7 @@ function get_long_break {
         fi
 
         is_bounded "$tmp" 15 25
-        if [[ $? -eq 1  && $NA_ALERT_FLAG -ne 0 ]]; then
+        if [[ $? -eq 1  && $NA_ALERT_FLAG -eq 0 ]]; then
             kdialog --warningyesnocancel \
             "Long break less, than 15 minutes, or more, than 25 minutes, is not advised. \nContinue anyway?" \
             --yes-label "Continue" \
@@ -249,11 +257,32 @@ function get_long_break {
 }
 
 function get_playlist {
-    # Configuring playlist
-    playlist=$(kdialog \
-                    --combobox "Choose playlist for while you're working: " \
-                    $(ls playlists))
-    exitcode=$?
+    while [[ -n $0 ]]; do
+        # Configuring playlist
+        playlist=$(kdialog \
+                        --combobox "Choose playlist for while you're working: " \
+                        $(ls playlists))
+        
+        if [[ $? -ne 0 ]]; then
+            kdialog --warningyesno "Are you sure, you want to quit?"
+            exitcode=$?
+            case $exitcode in
+                0) 
+                    exit 1;;
+                *)
+                    continue;;
+            esac
+        fi
+
+        if [[ -z $(ls $PLAYLISTS$playlist) ]]; then
+            kdialog --warningyesno "This playlist is empty. \nContinue anyway?"
+            if [[ $? -eq 0 ]]; then
+                break
+            fi
+        else
+            break
+        fi
+    done
 
     # Setting lofi as default
     if [[ exitcode -ne 0 || $playlist == "" ]]; then
@@ -270,6 +299,8 @@ function get_volume {
     elif [[ $volume -ne 0 ]]; then
         kdialog --warningyesno "Do you want to show pop-ups for upcoming music?"
         popups=$?
+    else
+        volume=0
     fi
 }
 
@@ -278,8 +309,6 @@ function get_work_info {
     get_work_time
     get_short_break
     get_long_break
-
-    #cycles=$((full_time / full_cycle * 4 + (full_time % full_cycle - 1) / (work + short_break) + 1))
 }
 function get_music_info {
     get_playlist
@@ -287,6 +316,9 @@ function get_music_info {
 }
 
 function create_new_template {
+    if [[ $1 -eq 1 ]]; then
+        NA_ALERT_FLAG=1
+    fi
     get_name
     get_work_info
     get_music_info
