@@ -28,7 +28,7 @@ volume=$NULL
 popups=$NULL
 break_counter=0
 
-# Popups related paramteres
+# Popups related parameters
 popup_last_stretch="Only a little bit more until the end! For the last cycle you need to work for "
 popup_start="Your work cycles begin. Good luck doing your tasks! You need to work for "
 popup_continue="Your break's over - it's time to get to work! You need to work for "
@@ -37,7 +37,6 @@ popup_end="You can finally rest. Your work is done, congratulations!"
 
 function use_template {
     name=$1
-    echo $name
     template=$(cat "$TEMPLATES_DB$name")
     full_time=$(echo "$template" | \
                 sed -e "s/$FULL_SEP.*//")
@@ -56,7 +55,6 @@ function use_template {
     volume=$(echo "$template" | \
                 sed -e "s/.*$VOLUME_SEP//" | \
                 sed -e "s/$POPUPS_SEP.*//")
-    echo $volume
     popups=$(echo "$template" | \
                 sed -e "s/.*$POPUPS_SEP//")
 }
@@ -71,7 +69,7 @@ function set_up_work_mode {
                     --no-label "Use existing"
     
     if [[ $? -eq 0 ]]; then
-        create_new_template
+        create_new_template $speed_debug
     fi
     
     while [[ -n $0 ]]; do
@@ -79,7 +77,6 @@ function set_up_work_mode {
                     --combobox "Choose a template to use" \
                     $(ls -1 $TEMPLATES_DB))
         if [[ $? -eq 0 ]]; then
-        echo $mode
             if [[ -f "./data/templates/$mode" ]]; then
                 use_template "$mode"
                 break
@@ -141,10 +138,9 @@ function start_pmdr {
             notification=$popup_continue$current_work" minutes."
         fi
 
-
         notify "$notification"
     done
     play_phase_sfx 3
     notify "$popup_end"
-    kdialog --imgbox astolfo.jpg
+    kdialog --imgbox job_is_done.jpg
 }
