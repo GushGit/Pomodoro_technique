@@ -31,15 +31,15 @@ function configure_music {
         esac
     done
 
-    if [[ volume -gt 1 ]]; then
+    # if-clause for normalizing volume to [0.0-1.0]
+    if [[ $volume -gt 1 ]]; then
         volume=$(bc<<<"scale=3;$volume/100.0")
     fi
-
-    echo $volume
 
     playlist_dir="./playlists/$playlist/"
     playlist_len="$(ls "$playlist_dir" | wc -l)"
 
+    # Randomizing the next played song
     rng_idx=$((RANDOM%playlist_len + 1))
     current_song=$( cat $PLAYLIST_DB | 
                     grep "$rng_idx" | 
@@ -69,18 +69,18 @@ function play_music () {
         esac
     done
 
-    # Randomise values for first iteration - after being called from <start_music()>
+    # Randomise values for first iteration - after being called from <configure_music()>
     rng_idx=$((RANDOM%playlist_len + 1))
-    current_song=$( cat $PLAYLIST_DB | 
-                    grep "$rng_idx" | 
+    current_song=$( cat $PLAYLIST_DB | \
+                    grep "$rng_idx" | \
                     sed -e 's/^ *[0-9]*	//')
 
     # Randomise values for next iteration
     next_song=$current_song
-    while [[ "$next_song" == "$current_song" ]]; do
+    while [[ "$next_song" == "$current_song" && $playlist_len -ne 1 ]]; do
         rng_idx=$((RANDOM%playlist_len + 1))
-        next_song=$(cat $PLAYLIST_DB | 
-                    grep "$rng_idx" | 
+        next_song=$(cat $PLAYLIST_DB | \
+                    grep "$rng_idx" | \
                     sed -e 's/^ *[0-9]*	//')
     done
 
@@ -95,7 +95,7 @@ function play_music () {
     # Play and exit/continue recursion
     play -v "$volume" "$playlist_dir$current_song.mp3"
     exitcode=$?
-    if [[ exitcode -eq $ERROR ]]; then
+    if [[ $exitcode -eq $ERROR ]]; then
         exit
     else 
         play_music "-s $next_song -v $volume"
@@ -103,12 +103,13 @@ function play_music () {
 }
 
 function play_phase_sfx { 
+    # Otherwise play() will output play-info to terminal
     exec 2>/dev/null
     pkill -9 "play"
 
     case $1 in
         "0") 
-            play $SFX_START;;
+            play -v 0.5 $SFX_START;;
         "1") 
             play $SFX_SHORT;;
         "2") 
