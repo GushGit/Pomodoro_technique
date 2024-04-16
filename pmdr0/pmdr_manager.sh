@@ -1,14 +1,13 @@
 #!/bin/bash
 #shellcheck disable=SC1091
 #shellcheck disable=SC2001
-source template_manager.sh
-source player.sh
-source math_utils.sh
+source ./template_manager.sh
+source ./player.sh
 
 TITLE="pmdr0"
 TEMPLATES_DB="./data/templates/"
 
-speed_debug=1
+speed_debug=60
 
 # Separators for extracting info from templates
 FULL_SEP="="
@@ -63,6 +62,10 @@ function use_template {
 }
 
 function set_up_work_mode { 
+    if [[ $1 -eq 1 ]]; then
+        speed_debug=1
+    fi
+    
     kdialog --yesno "Do you want to use existing template, or set up your own work mode?" \
                     --yes-label "New template" \
                     --no-label "Use existing"
@@ -71,16 +74,22 @@ function set_up_work_mode {
         create_new_template
     fi
     
-    mode=$(kdialog \
-                --combobox "Choose a template to use" \
-                $(ls -1 $TEMPLATES_DB))
-    if [[ $? -eq 0 ]]; then
-        use_template "$mode"
-    else
-        exit
-    fi
-    
-    start_pmdr
+    while [[ -n $0 ]]; do
+        mode=$(kdialog \
+                    --combobox "Choose a template to use" \
+                    $(ls -1 $TEMPLATES_DB))
+        if [[ $? -ne 0 ]]; then
+            if [[ -z $mode ]]; then
+                use_template "$mode"
+                break
+            else
+                kdialog --error "You didn't choose a template!"
+                continue
+            fi
+        else
+            exit
+        fi
+    done
 }
 
 function notify () {
@@ -139,5 +148,3 @@ function start_pmdr {
     notify "$popup_end"
     kdialog --imgbox astolfo.jpg
 }
-
-set_up_work_mode

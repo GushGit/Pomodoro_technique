@@ -5,7 +5,7 @@
 #shellcheck disable=SC2027
 #shellcheck disable=SC2086
 #shellcheck disable=SC2143
-source math_utils.sh
+source ./math_utils.sh
 
 FULL_SEP="="
 BREAK_SEP="+"
