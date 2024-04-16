@@ -3,14 +3,6 @@
 #shellcheck disable=SC2034
 source ./pmdr_manager.sh
 
-trap """pkill -9 play; \
-        ps aux | \
-        grep './pmdr0.sh' | \
-        sed -e 's/.* //' | \
-        sed -e 's/ .*//' | \
-        kill -9 \
-        """ SIGINT
-
 debug_flag=0
 fast_templates=0
 for input in "$@"; do
