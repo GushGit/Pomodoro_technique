@@ -119,7 +119,7 @@ function start_pmdr {
         notify "$notification"
 
         _=$((break_counter++))
-        if [[ $break_counter%4 -ne 0 ]]; then
+        if [[ $((break_counter%4)) -ne 0 ]]; then
             current_break=$short_break
             play_phase_sfx 1
         else

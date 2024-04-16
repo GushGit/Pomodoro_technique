@@ -13,7 +13,6 @@ LONG_SHORT_SEP="|"
 PLAYER_SEP="&"
 VOLUME_SEP="%"
 POPUPS_SEP="!"
-#TEMPLATE_FORM="\\"$WORK_SEP"[0-9]+\\"$BREAK_SEP"[0-9]+\\"$LONG_SHORT_SEP"[0-9]+\\"$CYCLES_SEP"[0-9]+\\"$PLAYER_SEP"[[A-Z]|[a-z]]+\\"$VOLUME_SEP"[0-9]+\\"$POPUPS_SEP"[0|1]"
 
 TEMPLATES_DB="./data/templates/"
 NA_ALERT_FLAG=0
@@ -21,15 +20,12 @@ NA_ALERT_FLAG=0
 template=$NULL
 name=$NULL
 full_time=$NULL
-#full_cycle=$NULL
 work=$NULL
 short_break=$NULL
 long_break=$NULL
 playlist=$NULL
 volume=$NULL
-popups=0
-
-#TODO: use the same thingy that Bobr user - "_=$(($1=$(($1 + 1))))" 
+popups=0 
 
 function get_name {
     while [[ -n $0 ]]; do
@@ -139,7 +135,7 @@ function get_work_time {
         fi
 
         is_bounded "$tmp" 25 45
-        if [[ $? -eq 1 ]]; then
+        if [[ $? -eq 1 && $NA_ALERT_FLAG -ne 0 ]]; then
             kdialog --warningyesnocancel \
             "Work period less, than 25 minutes, or more, than 45 minutes, is not advised. \nContinue anyway?" \
             --yes-label "Continue" \
@@ -185,7 +181,7 @@ function get_short_break {
         fi
 
         is_bounded "$tmp" 5 10
-        if [[ $? -eq 1 ]]; then
+        if [[ $? -eq 1  && $NA_ALERT_FLAG -ne 0 ]]; then
             kdialog --warningyesnocancel \
             "Short break less, than 5 minutes, or more, than 10 minutes, is not advised. \nContinue anyway?" \
             --yes-label "Continue" \
@@ -231,7 +227,7 @@ function get_long_break {
         fi
 
         is_bounded "$tmp" 15 25
-        if [[ $? -eq 1 ]]; then
+        if [[ $? -eq 1  && $NA_ALERT_FLAG -ne 0 ]]; then
             kdialog --warningyesnocancel \
             "Long break less, than 15 minutes, or more, than 25 minutes, is not advised. \nContinue anyway?" \
             --yes-label "Continue" \
@@ -258,7 +254,7 @@ function get_playlist {
                     --combobox "Choose playlist for while you're working: " \
                     $(ls playlists))
     exitcode=$?
-    
+
     # Setting lofi as default
     if [[ exitcode -ne 0 || $playlist == "" ]]; then
         playlist="lofi"
