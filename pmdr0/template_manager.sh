@@ -56,25 +56,24 @@ function get_name {
             continue
         fi
 
-        if [[ -n ${tmp//[A-z]/} ]]; then
-            kdialog --warningyesno "It is better to have only alphabetical symbols in the template name. \nContinue anyway?"
-            if [[ $? -ne 0 ]]; then
-                continue;
-            fi
-        fi
-
-        if [[ -n "$(ls $TEMPLATES_DB | grep $tmp)" ]]; then
+        if [[ -n "$(ls $TEMPLATES_DB | grep "$tmp.temp")" ]]; then
             kdialog --warningyesno \
             "Template with name \"$tmp\" already exists. \nDo you want to update parameters of the existing one?" \
             --yes-label "Update" \
             --no-label "Cancel"
 
             if [[ $? -eq 0 ]]; then 
-                rm $TEMPLATES_DB$tmp
                 break
             fi
         else
             break;
+        fi
+
+        if [[ -n ${tmp//[A-z]/} ]]; then
+            kdialog --warningyesno "It is better to have only alphabetical symbols in the template name. \nContinue anyway?"
+            if [[ $? -ne 0 ]]; then
+                continue;
+            fi
         fi
     done
     name=$tmp
@@ -344,7 +343,7 @@ function get_music_info {
 }
 
 function create_new_template {
-    if [[ $1 -eq 1 ]]; then
+    if [[ $fast_flag -eq 1 ]]; then
         NA_ALERT_FLAG=1
     fi
     get_name

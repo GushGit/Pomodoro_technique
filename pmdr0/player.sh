@@ -7,12 +7,14 @@
 NULL="null"
 ERROR=137
 PLAYLIST_DB="./data/playlist.db"
+MAX_INFO_LENGTH=17
 SFX_DIR="./sfx/"
 SFX_START=$SFX_DIR"start.wav"
 SFX_SHORT=$SFX_DIR"short.wav"
 SFX_LONG=$SFX_DIR"long.wav"
 SFX_END=$SFX_DIR"end.wav"
 popup_flag=$NULL
+volume=0
 
 export playlist_len
 
@@ -31,19 +33,11 @@ function configure_music {
         esac
     done
 
-    # if-clause for normalizing volume to [0.0-1.0]
-    if [[ $volume -gt 1 ]]; then
-        volume=$(bc<<<"scale=3;$volume/100.0")
-    fi
+    # Normalizing volume to the interval [0.0, 1.0]
+    volume="0$(bc<<<"scale=3;$volume/100.0")"
 
     playlist_dir="./playlists/$playlist/"
     playlist_len="$(ls "$playlist_dir" | wc -l)"
-
-    # Randomizing the next played song
-    rng_idx=$((RANDOM%playlist_len + 1))
-    current_song=$( cat $PLAYLIST_DB | 
-                    grep "$rng_idx" | 
-                    sed -e 's/^ *[0-9]*	//')
 
     # Initializing/preformatting database
     ls "$playlist_dir" -1 | \
@@ -51,7 +45,12 @@ function configure_music {
     nl | \
     sed -e 's/ *//' > $PLAYLIST_DB 
 
-    play_music "-s $current_song -v $volume" 2> /dev/null&
+    # Randomizing the next composition
+    rng_idx=$((RANDOM%playlist_len + 1))
+    current_song=$( cat $PLAYLIST_DB | 
+                    grep "$rng_idx" | 
+                    sed -e 's/^ *[0-9]*	//')
+    play_music "-s" "$current_song" 2> /dev/null&
 }
 
 # Main recursive play function
@@ -60,8 +59,6 @@ function play_music () {
     current_song=$NULL
     for input in "$@"; do
         case $input in
-            "-v") 
-                shift; volume=$1; shift;;
             "-s") 
                 shift; current_song=$1; shift;;
             *) 
@@ -69,47 +66,50 @@ function play_music () {
         esac
     done
 
-    # Randomise values for first iteration - after being called from <configure_music()>
-    rng_idx=$((RANDOM%playlist_len + 1))
-    current_song=$( cat $PLAYLIST_DB | \
-                    grep "$rng_idx" | \
-                    sed -e 's/^ *[0-9]*	//')
-
-    # Randomise values for next iteration
+    # Randomise next composition for the next iteration
     next_song=$current_song
     while [[ "$next_song" == "$current_song" && $playlist_len -ne 1 ]]; do
         rng_idx=$((RANDOM%playlist_len + 1))
         next_song=$(cat $PLAYLIST_DB | \
-                    grep "$rng_idx" | \
+                    grep "$rng_idx	" | \
                     sed -e 's/^ *[0-9]*	//')
     done
 
-    # A "Now Playing" banner
+    # A "Now/Next Playing" banner
     if [[ $popup_flag -eq 0 ]]; then
+        local curr=${current_song:0:$MAX_INFO_LENGTH}
+        if [[ "$curr" != "$current_song" ]]; then
+            curr="$curr..."
+        fi
+
+        local next=${next_song:0:$MAX_INFO_LENGTH}
+        if [[ "$next" != "$next_song" ]]; then
+            next="$next..."
+        fi
         kdialog \
             --icon audio-headphones-symbolic \
-            --title "Now playing: $current_song." \
-            --passivepopup "Playing next: $next_song."
+            --title "Now playing: $curr" \
+            --passivepopup "Playing next: $next"
     fi
 
-    # Play and exit/continue recursion
+    # Play music and exit/continue recursion
     play -v "$volume" "$playlist_dir$current_song.mp3"
-    exitcode=$?
+    local exitcode=$?
     if [[ $exitcode -eq $ERROR ]]; then
         exit
     else 
-        play_music "-s $next_song -v $volume"
+        play_music "-s" "$next_song"
     fi
 }
 
 function play_phase_sfx { 
-    # Otherwise play() will output play-info to terminal
+    # Without `exec` <play()> will output play-info to terminal
     exec 2>/dev/null
     pkill -9 "play"
 
     case $1 in
         "0") 
-            play -v 0.5 $SFX_START;;
+            play -v 0.4 $SFX_START;;
         "1") 
             play $SFX_SHORT;;
         "2") 
