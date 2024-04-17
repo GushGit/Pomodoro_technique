@@ -65,8 +65,8 @@ function play_music () {
         # Randomizing the next composition
         rng_idx=$((RANDOM%playlist_len + 1))
         current_song=$( cat $PLAYLIST_DB | 
-                        grep "$rng_idx  " | 
-                        sed -e 's/^ *[0-9]*	//')
+                        grep "$rng_idx	" | 
+                        sed -e 's/^[0-9]	//')
     fi
 
     # Randomise next composition for the next iteration
