@@ -4,8 +4,10 @@
 #shellcheck disable=SC2046
 #shellcheck disable=SC2086
 #shellcheck disable=SC2181
-source ./template_manager.sh
-source ./player.sh
+
+export SCRIPT_DIR
+source "$SCRIPT_DIR/pmdr/template_manager.sh"
+source "$SCRIPT_DIR/pmdr/player.sh"
 
 export debug_flag
 export fast_flag

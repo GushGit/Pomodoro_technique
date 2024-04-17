@@ -7,7 +7,9 @@
 #shellcheck disable=SC2086
 #shellcheck disable=SC2143
 #shellcheck disable=SC2181
-source ./math_utils.sh
+
+export SCRIPT_DIR
+source "$SCRIPT_DIR/pmdr/math_utils.sh"
 
 export debug_flag
 export fast_flag
