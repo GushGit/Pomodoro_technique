@@ -45,12 +45,7 @@ function configure_music {
     nl | \
     sed -e 's/ *//' > $PLAYLIST_DB 
 
-    # Randomizing the next composition
-    rng_idx=$((RANDOM%playlist_len + 1))
-    current_song=$( cat $PLAYLIST_DB | 
-                    grep "$rng_idx  " | 
-                    sed -e 's/^ *[0-9]*	//')
-    play_music "-s" "$current_song" 2> /dev/null&
+    play_music 2> /dev/null&
 }
 
 # Main recursive play function
@@ -66,6 +61,14 @@ function play_music () {
         esac
     done
 
+    if [[ "$current_song" == "$NULL" ]]; then
+        # Randomizing the next composition
+        rng_idx=$((RANDOM%playlist_len + 1))
+        current_song=$( cat $PLAYLIST_DB | 
+                        grep "$rng_idx  " | 
+                        sed -e 's/^ *[0-9]*	//')
+    fi
+
     # Randomise next composition for the next iteration
     next_song=$current_song
     while [[ "$next_song" == "$current_song" && $playlist_len -ne 1 ]]; do
@@ -76,7 +79,7 @@ function play_music () {
     done
 
     # A "Now/Next Playing" banner
-    if [[ $popup_flag -eq 0 ]]; then
+    if [[ $popup_flag -eq 0 && $current_song != "" ]]; then
         local curr=${current_song:0:$MAX_INFO_LENGTH}
         if [[ "$curr" != "$current_song" ]]; then
             curr="$curr..."
