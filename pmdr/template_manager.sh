@@ -9,7 +9,7 @@
 #shellcheck disable=SC2181
 
 export SCRIPT_DIR
-source "$SCRIPT_DIR/pmdr/math_utils.sh"
+source "$SCRIPT_DIR/math_utils.sh"
 
 export debug_flag
 export fast_flag
@@ -23,8 +23,8 @@ VOLUME_SEP="%"
 POPUPS_SEP="!"
 
 # Config & databases constants
-TEMPLATES_DB="./data/templates/"
-PLAYLISTS="./playlists/"
+TEMPLATES_DB="$SCRIPT_DIR/data/templates/"
+PLAYLISTS="$SCRIPT_DIR/playlists/"
 NA_ALERT_FLAG=0
 
 # Templates' parameters

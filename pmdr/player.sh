@@ -3,12 +3,14 @@
 #shellcheck disable=SC2181
 #shellcheck disable=SC2046
 
+export SCRIPT_DIR
+
 # Initializing constants
 NULL="null"
 ERROR=137
-PLAYLIST_DB="./data/playlist.db"
+PLAYLIST_DB="$SCRIPT_DIR/data/playlist.db"
 MAX_INFO_LENGTH=17
-SFX_DIR="./sfx/"
+SFX_DIR="$SCRIPT_DIR/sfx/"
 SFX_START=$SFX_DIR"start.wav"
 SFX_SHORT=$SFX_DIR"short.wav"
 SFX_LONG=$SFX_DIR"long.wav"
@@ -36,7 +38,7 @@ function configure_music {
     # Normalizing volume to the interval [0.0, 1.0]
     volume="0$(bc<<<"scale=3;$volume/100.0")"
 
-    playlist_dir="./playlists/$playlist/"
+    playlist_dir="$SCRIPT_DIR/playlists/$playlist/"
     playlist_len="$(ls "$playlist_dir" | wc -l)"
 
     # Initializing/preformatting database

@@ -6,8 +6,8 @@
 #shellcheck disable=SC2181
 
 export SCRIPT_DIR
-source "$SCRIPT_DIR/pmdr/template_manager.sh"
-source "$SCRIPT_DIR/pmdr/player.sh"
+source "$SCRIPT_DIR/template_manager.sh"
+source "$SCRIPT_DIR/player.sh"
 
 export debug_flag
 export fast_flag
@@ -88,7 +88,7 @@ function set_up_work_mode {
                     --combobox "Choose a template to use" \
                     $(ls -1 $TEMPLATES_DB))
         if [[ $? -eq 0 ]]; then
-            if [[ -f "./data/templates/$mode" ]]; then
+            if [[ -f "$SCRIPT_DIR/data/templates/$mode" ]]; then
                 use_template "$mode"
                 break
             else

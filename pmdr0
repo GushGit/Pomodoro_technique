@@ -2,8 +2,8 @@
 #shellcheck disable=SC1091
 #shellcheck disable=SC2034
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source "$SCRIPT_DIR/pmdr/pmdr_manager.sh"
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/pmdr"
+source "$SCRIPT_DIR/pmdr_manager.sh"
 
 debug_flag=0
 fast_flag=0
