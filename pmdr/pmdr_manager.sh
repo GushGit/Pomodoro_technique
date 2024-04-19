@@ -13,9 +13,9 @@ export debug_flag
 export fast_flag
 
 TITLE="pmdr0"
-INFO_CLR="                                                      "
-INFO_SEP="------------------------------------------------------"
-INFO_BOX="======================================================"
+INFO_CLR="                                                        "
+INFO_SEP="--------------------------------------------------------"
+INFO_BOX="========================================================"
 # Seconds Per Update
 SPU=0.01
 export TEMPLATES_DB
@@ -165,16 +165,16 @@ function start_pmdr {
             now=$(date +%s)
             
             from_full_start=$(date -d@$((now - start)) -u \
-            +"| Time passed since the start:              %H:%M:%S |")
+            +"| Time passed since the start:                %H:%M:%S |")
             
             time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
-            +"| Time remaining of your full work cycles:  %H:%M:%S |")
+            +"| Time remaining of your full work cycles:    %H:%M:%S |")
 
             time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
-            +"| Time remaining of work period:            %H:%M:%S |")
+            +"| Time remaining of work period:              %H:%M:%S |")
 
             from_cycle_start=$(date -d@$((now - cycle_start)) -u \
-            +"| Time passed since the start of work:      %H:%M:%S |")
+            +"| Time passed since the start of work:        %H:%M:%S |")
             
             printf "%s\n%s\n" \
                             "$INFO_CLR" \
@@ -224,16 +224,16 @@ function start_pmdr {
             now=$(date +%s)
             
             from_full_start=$(date -d@$((now - start)) -u \
-            +"Time passed since the start:                  %H:%M:%S")
+            +"| Time passed since the start:                %H:%M:%S |")
             
             time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
-            +"Time remaining of your full work cycles:      %H:%M:%S")
+            +"| Time remaining of your full work cycles:    %H:%M:%S |")
 
             time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
-            +"Time remaining of break period:               %H:%M:%S")
+            +"| Time remaining of break period:             %H:%M:%S |")
 
             from_cycle_start=$(date -d@$((now - cycle_start)) -u \
-            +"Time passed since the start of break:         %H:%M:%S")
+            +"| Time passed since the start of break:       %H:%M:%S |")
 
             
             printf "%s\n%s\n" \
