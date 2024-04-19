@@ -219,7 +219,7 @@ function start_pmdr {
 
         wait $((current_break * speed_debug))&
         cycle_start=$(date +%s)
-        cycle_end=$((cycle_start + current_work * speed_debug))
+        cycle_end=$((cycle_start + current_break * speed_debug))
         while [[ $(cat $WAIT_FLAG) == "1" ]]; do
             now=$(date +%s)
             
