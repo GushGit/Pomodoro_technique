@@ -13,9 +13,11 @@ export debug_flag
 export fast_flag
 
 TITLE="pmdr0"
-INFO_SEP="-----=====-----"
+INFO_CLR="                                                      "
+INFO_SEP="------------------------------------------------------"
+INFO_BOX="======================================================"
 # Seconds Per Update
-SPU=10
+SPU=0.01
 export TEMPLATES_DB
 
 speed_debug=60
@@ -163,31 +165,35 @@ function start_pmdr {
             now=$(date +%s)
             
             from_full_start=$(date -d@$((now - start)) -u \
-            +"Time passed since the start:              %H:%M:%S")
+            +"| Time passed since the start:              %H:%M:%S |")
             
             time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
-            +"Time remaining of your full work cycles:  %H:%M:%S")
+            +"| Time remaining of your full work cycles:  %H:%M:%S |")
 
             time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
-            +"Time remaining of work period:            %H:%M:%S")
+            +"| Time remaining of work period:            %H:%M:%S |")
 
             from_cycle_start=$(date -d@$((now - cycle_start)) -u \
-            +"Time passed since the start of work:      %H:%M:%S")
+            +"| Time passed since the start of work:      %H:%M:%S |")
             
-            printf "\n%s\n" "$INFO_SEP"
-            printf "%s\n%s\n\n%s\n%s\n" \
+            printf "%s\n%s\n" \
+                            "$INFO_CLR" \
+                            "$INFO_BOX"
+            printf "%s\n%s\n%s\n%s\n%s\n" \
                             "$from_full_start" \
                             "$time_full_remaining" \
+                            "$INFO_SEP" \
                             "$from_cycle_start" \
                             "$time_cycle_remaining"
             
-            printf "%s\n\n" "$INFO_SEP"
+            printf "%s\n%s\n" \
+                            "$INFO_BOX" \
+                            "$INFO_CLR"
 
             sleep $SPU
             printf "\r"
             i=0
             while [[ i -lt 9 ]]; do
-                printf "\33[2K"
                 printf "\033[A"
                 _=$((i++))
             done
@@ -243,7 +249,6 @@ function start_pmdr {
             printf "\r"
             i=0
             while [[ i -lt 9 ]]; do
-                printf "\33[2K"
                 printf "\033[A"
                 _=$((i++))
             done
