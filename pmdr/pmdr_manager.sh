@@ -17,7 +17,7 @@ INFO_CLR="                                                        "
 INFO_SEP="--------------------------------------------------------"
 INFO_BOX="========================================================"
 # Seconds Per Update
-SPU=0.01
+SPU=0.05
 export TEMPLATES_DB
 
 speed_debug=60
@@ -164,16 +164,16 @@ function start_pmdr {
         while [[ $(cat $WAIT_FLAG) == "1" ]]; do
             now=$(date +%s)
             
-            from_full_start=$(date -d@$((now - start)) -u \
+            from_full_start=$(date -d@$(max 0 $((now - start))) -u \
             +"| Time passed since the start:                %H:%M:%S |")
             
-            time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
+            time_full_remaining=$(date -d@$(max 0 $((start + full_time * speed_debug - now))) -u \
             +"| Time remaining of your full work cycles:    %H:%M:%S |")
 
-            time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
+            time_cycle_remaining=$(date -d@$(max 0 $((cycle_end - now))) -u \
             +"| Time remaining of work period:              %H:%M:%S |")
 
-            from_cycle_start=$(date -d@$((now - cycle_start)) -u \
+            from_cycle_start=$(date -d@$(max 0 $((now - cycle_start))) -u \
             +"| Time passed since the start of work:        %H:%M:%S |")
             
             printf "%s\n%s\n" \
@@ -223,16 +223,16 @@ function start_pmdr {
         while [[ $(cat $WAIT_FLAG) == "1" ]]; do
             now=$(date +%s)
             
-            from_full_start=$(date -d@$((now - start)) -u \
+            from_full_start=$(date -d@$(max 0 $((now - start))) -u \
             +"| Time passed since the start:                %H:%M:%S |")
             
-            time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
+            time_full_remaining=$(date -d@$(max 0 $((start + full_time * speed_debug - now))) -u \
             +"| Time remaining of your full work cycles:    %H:%M:%S |")
 
-            time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
+            time_cycle_remaining=$(date -d@$(max 0 $((cycle_end - now))) -u \
             +"| Time remaining of break period:             %H:%M:%S |")
 
-            from_cycle_start=$(date -d@$((now - cycle_start)) -u \
+            from_cycle_start=$(date -d@$(max 0 $((now - cycle_start))) -u \
             +"| Time passed since the start of break:       %H:%M:%S |")
 
             
