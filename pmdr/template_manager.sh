@@ -115,7 +115,7 @@ function get_full_time {
 
         # Positive integer check
         if [[ -n ${tmp//[0-9]/} ]]; then
-            kdialog --error "Please, only input positive integer numbers!"
+            kdialog --error "Please, input only non-negative integer numbers!"
             continue;
         fi
 
@@ -171,7 +171,7 @@ function get_work_time {
 
         # Positive integer check
         if [[ -n ${tmp//[0-9]/} ]]; then
-            kdialog --error "Please, only input positive integer numbers!"
+            kdialog --error "Please, input only non-negative integer numbers!"
             continue;
         fi
 
@@ -227,7 +227,7 @@ function get_short_break {
 
         # Positive integer check
         if [[ -n ${tmp//[0-9]/} ]]; then
-            kdialog --error "Please, only input positive integer numbers!"
+            kdialog --error "Please, input only non-negative integer numbers!"
             continue;
         fi
 
@@ -283,7 +283,7 @@ function get_long_break {
 
         # Positive integer check
         if [[ -n ${tmp//[0-9]/} ]]; then
-            kdialog --error "Please, only input positive integer numbers!"
+            kdialog --error "Please, input only non-negative integer numbers!"
             continue;
         fi
 
@@ -291,7 +291,7 @@ function get_long_break {
         is_bounded "$tmp" 15 25
         if [[ $? -eq 1  && $NA_ALERT_FLAG -eq 0 ]]; then
             kdialog --warningyesnocancel \
-            "Long break less, than 15 minutes, or more, than 25 minutes, is not advised. \nContinue anyway?" \
+            "Long break less, than 15 minutes, or more, than 25 minutes, is not advised. \nContin1ue anyway?" \
             --yes-label "Continue" \
             --no-label "Cancel" \
             --cancel-label "Do not ask again"
