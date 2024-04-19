@@ -2,9 +2,11 @@
 #shellcheck disable=SC1091
 #shellcheck disable=SC2034
 
+# Extracting source directory for later exporting in other scripts
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/pmdr"
 source "$SCRIPT_DIR/pmdr_manager.sh"
 
+# Flag analyzer
 debug_flag=0
 fast_flag=0
 for input in "$@"; do
@@ -18,6 +20,7 @@ for input in "$@"; do
     esac
 done
 
+# Main functions
 set_up_work_mode
 
 start_pmdr

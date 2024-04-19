@@ -44,6 +44,9 @@ popup_break="Time's up! You can take a break for "
 popup_end="You can finally rest. Your work is done, congratulations!"
 
 function use_template {
+    ### Each line in this function after initializing $template 
+    ### simply deletes everything after and before separators besides the required value,
+    ### which leaves the required value itself
     name=$1
     template=$(cat "$TEMPLATES_DB$name")
     full_time=$(echo "$template" | \
@@ -68,14 +71,17 @@ function use_template {
 }
 
 function set_up_work_mode {
+    # Flag analyzer
     if [[ $debug_flag -eq 1 ]]; then
         speed_debug=1
     fi
 
+    # Calling yes-no box to decide on usage of templates
     kdialog --yesno "Do you want to use existing template, or set up your own work mode?" \
             --yes-label "New template" \
             --no-label "Use existing"
-    
+
+
     case $? in 
         0) 
             create_new_template;;
@@ -83,6 +89,7 @@ function set_up_work_mode {
             exit 1;;
     esac
     
+    # Picking template to use
     while [[ -n $0 ]]; do
         mode=$(kdialog \
                     --combobox "Choose a template to use" \
@@ -101,6 +108,7 @@ function set_up_work_mode {
     done
 }
 
+# Alias
 function notify () {
     kdialog \
         --icon player-time \
@@ -109,12 +117,17 @@ function notify () {
 }
 
 function start_pmdr {
+    # Setting up initial values for work
+    remaining_time=$full_time
     current_break=$short_break
     current_work=$work
     notification=$popup_start$work" minutes."
-    while [[ $full_time -gt 0 ]]; do
-        if [[ $full_time -le $((work+current_break)) ]]; then
-            current_work=$full_time;
+
+    # Main loop
+    while [[ $remaining_time -gt 0 ]]; do
+        # If cycles end on break, expand work time to match remaining time
+        if [[ $remaining_time -le $((work+current_break)) ]]; then
+            current_work=$remaining_time;
             notification=$popup_last_stretch$current_work" minutes!"
         else
             notification=$popup_continue$current_work" minutes."
@@ -125,10 +138,12 @@ function start_pmdr {
         play_phase_sfx 0
         configure_music "-u $popups -v $volume -p $playlist"
 
+        # Wait for the work cycle to end and update remaining time
         sleep $((current_work * speed_debug))
-        full_time=$((full_time-current_work))
+        remaining_time=$((remaining_time-current_work))
 
-        if [[ $full_time -le 0 ]]; then
+        # Default end-of-time check
+        if [[ $remaining_time -le 0 ]]; then
             break;
         fi
         notification=$popup_break$current_break" minutes."
@@ -144,7 +159,7 @@ function start_pmdr {
         fi
 
         sleep $((current_break * speed_debug))
-        full_time=$((full_time-current_break))
+        remaining_time=$((remaining_time-current_break))
     done
     play_phase_sfx 3
     notify "$popup_end"

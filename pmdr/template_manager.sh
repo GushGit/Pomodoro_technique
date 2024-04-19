@@ -40,8 +40,10 @@ popups=0
 
 function get_name {
     while [[ -n $0 ]]; do
+        # Calling inputbox to get template name from user
         tmp=$(kdialog --inputbox "Name your template.")
 
+        # Default exit-confirmation block
         if [[ $? -ne 0 ]]; then
             kdialog --warningyesno "Are you sure, you want to quit?"
             exitcode=$?
@@ -53,11 +55,13 @@ function get_name {
             esac
         fi
         
+        # Null-name check
         if [[ -z $tmp ]]; then
             kdialog --error "Template name cannot be null!"
             continue
         fi
 
+        # Specific to template name not-ideal-value check: "Template name already exists!"
         if [[ -n "$(ls $TEMPLATES_DB | grep "$tmp.temp")" ]]; then
             kdialog --warningyesno \
             "Template with name \"$tmp\" already exists. \nDo you want to update parameters of the existing one?" \
@@ -71,6 +75,7 @@ function get_name {
             break;
         fi
 
+        # Aplhabetical-name check
         if [[ -n ${tmp//[A-z]/} ]]; then
             kdialog --warningyesno "It is better to have only alphabetical symbols in the template name. \nContinue anyway?"
             if [[ $? -ne 0 ]]; then
@@ -82,8 +87,10 @@ function get_name {
 }
 function get_full_time {
     while [[ -n $0 ]]; do
+        # Calling inputbox to get full time from user
         tmp=$(kdialog --inputbox "Enter full time for your work, in minutes. \n30~300 minutes is ideal")
 
+        # Default exit-confirmation block
         if [[ $? -ne 0 ]]; then
             kdialog --warningyesno "Are you sure, you want to quit?"
             exitcode=$?
@@ -95,6 +102,7 @@ function get_full_time {
             esac
         fi
 
+        # Null-time check
         if [[ -z $tmp ]]; then
             if [[ $fast_flag -eq 1 ]]; then
                 full_time=120
@@ -105,11 +113,13 @@ function get_full_time {
             fi
         fi
 
+        # Positive integer check
         if [[ -n ${tmp//[0-9]/} ]]; then
             kdialog --error "Please, only input positive integer numbers!"
             continue;
         fi
 
+        # Specific to full time not-ideal-value check: "full_time < 30m OR full_time > 300m!"
         is_bounded "$tmp" 30 300
         if [[ $? -eq 1 && $NA_ALERT_FLAG -eq 0 ]]; then
             kdialog --warningyesnocancel \
@@ -133,8 +143,10 @@ function get_full_time {
 }
 function get_work_time {
     while [[ -n $0 ]]; do
+        # Calling inputbox to get time for work period from user
         tmp=$(kdialog --inputbox "Enter time for one work period. \n25~45 minutes is ideal")
 
+        # Default exit-confirmation block
         if [[ $? -ne 0 ]]; then
             kdialog --warningyesno "Are you sure, you want to quit?"
             exitcode=$?
@@ -146,6 +158,7 @@ function get_work_time {
             esac
         fi
 
+        # Null-time check
         if [[ -z $tmp ]]; then
             if [[ $fast_flag -eq 1 ]]; then
                 work=30
@@ -156,11 +169,13 @@ function get_work_time {
             fi
         fi
 
+        # Positive integer check
         if [[ -n ${tmp//[0-9]/} ]]; then
             kdialog --error "Please, only input positive integer numbers!"
             continue;
         fi
 
+        # Specific to work period not-ideal-value check: "work_time < 25m OR work_time > 45m!"
         is_bounded "$tmp" 25 45
         if [[ $? -eq 1 && $NA_ALERT_FLAG -eq 0 ]]; then
             kdialog --warningyesnocancel \
@@ -184,8 +199,10 @@ function get_work_time {
 }
 function get_short_break {
     while [[ -n $0 ]]; do
+        # Calling inputbox to get time for short break from user
         tmp=$(kdialog --inputbox "Enter time for short break. \n5~10 minutes is ideal")
 
+        # Default exit-confirmation block
         if [[ $? -ne 0 ]]; then
             kdialog --warningyesno "Are you sure, you want to quit?"
             exitcode=$?
@@ -197,6 +214,7 @@ function get_short_break {
             esac
         fi
 
+        # Null-time check
         if [[ -z $tmp ]]; then
             if [[ $fast_flag -eq 1 ]]; then
                 short_break=5
@@ -207,11 +225,13 @@ function get_short_break {
             fi
         fi
 
+        # Positive integer check
         if [[ -n ${tmp//[0-9]/} ]]; then
             kdialog --error "Please, only input positive integer numbers!"
             continue;
         fi
 
+        # Specific to short break not-ideal-value check: "short_time < 5m OR short_time > 15m!"
         is_bounded "$tmp" 5 10
         if [[ $? -eq 1  && $NA_ALERT_FLAG -eq 0 ]]; then
             kdialog --warningyesnocancel \
@@ -235,8 +255,10 @@ function get_short_break {
 }
 function get_long_break {
     while [[ -n $0 ]]; do
+        # Calling inputbox to get time for long break from user
         tmp=$(kdialog --inputbox "Enter time for long break. \n15~25 minutes is ideal")
 
+        # Default exit-confirmation block
         if [[ $? -ne 0 ]]; then
             kdialog --warningyesno "Are you sure, you want to quit?"
             exitcode=$?
@@ -248,6 +270,7 @@ function get_long_break {
             esac
         fi
 
+        # Null-time check
         if [[ -z $tmp ]]; then
             if [[ $fast_flag -eq 1 ]]; then
                 long_break=15
@@ -258,11 +281,13 @@ function get_long_break {
             fi
         fi
 
+        # Positive integer check
         if [[ -n ${tmp//[0-9]/} ]]; then
             kdialog --error "Please, only input positive integer numbers!"
             continue;
         fi
 
+        # Specific to long break not-ideal-value check: "long_time < 15m OR long_time > 25m"
         is_bounded "$tmp" 15 25
         if [[ $? -eq 1  && $NA_ALERT_FLAG -eq 0 ]]; then
             kdialog --warningyesnocancel \
@@ -287,15 +312,17 @@ function get_long_break {
 
 function get_playlist {
     while [[ -n $0 ]]; do
-        # Configuring playlist
+        # Calling combobox window to get playlist
         playlist=$(kdialog \
                         --combobox "Choose playlist for while you're working: " \
                         $(ls playlists))
-        
+        exitcode=$?
+
+        # Default exit-confirmation block
         if [[ $? -ne 0 ]]; then
             kdialog --warningyesno "Are you sure, you want to quit?"
-            exitcode=$?
-            case $exitcode in
+            exit=$?
+            case $exit in
                 0) 
                     exit 1;;
                 *)
@@ -303,6 +330,7 @@ function get_playlist {
             esac
         fi
 
+        # Specific to playlists non-ideal-value check: "Playlist is empty!"
         if [[ -z $(ls $PLAYLISTS$playlist) ]]; then
             kdialog --warningyesno "This playlist is empty. \nContinue anyway?"
             if [[ $? -eq 0 ]]; then
@@ -313,16 +341,18 @@ function get_playlist {
         fi
     done
 
-    # Setting lofi as default
+    # Setting lofi-playlist as default if previous step fails to establish a playlist
     if [[ exitcode -ne 0 || $playlist == "" ]]; then
         playlist="lofi"
     fi
 }
 function get_volume {
+    # Calling slider window to get volume
     volume=$(kdialog \
             --title "$TITLE" \
             --slider "Choose music's volume while you're working (0%-100%)." 0 100 10)
 
+    # Setting up volume/popups
     if [[ $? -eq 0 ]]; then
         return
     elif [[ $volume -ne 0 ]]; then
@@ -345,12 +375,17 @@ function get_music_info {
 }
 
 function create_new_template {
+    # Turning off alerts on non-ideal input
     if [[ $fast_flag -eq 1 ]]; then
         NA_ALERT_FLAG=1
     fi
+
+    # Getting all the info
     get_name
     get_work_info
     get_music_info
+
+    # Writing info to template, and then to file
     template="$full_time$FULL_SEP$work$BREAK_SEP$short_break$LONG_SHORT_SEP$long_break$PLAYER_SEP$playlist$VOLUME_SEP$volume$POPUPS_SEP$popups"
     
     echo $template > "$TEMPLATES_DB$name.temp"
