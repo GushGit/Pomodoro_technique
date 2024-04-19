@@ -16,6 +16,7 @@ TITLE="pmdr0"
 export TEMPLATES_DB
 
 speed_debug=60
+WAIT_FLAG="$SCRIPT_DIR/wait_flag.conf"
 
 # Separators for extracting info from templates
 export FULL_SEP
@@ -34,7 +35,6 @@ long_break=$NULL
 playlist=$NULL
 volume=$NULL
 popups=$NULL
-break_counter=0
 
 # Popups related parameters
 popup_last_stretch="Only a little bit more until the end! For the last cycle you need to work for "
@@ -116,13 +116,27 @@ function notify () {
         --passivepopup "$@"
 }
 
+function stop_waiting {
+    echo 0 > "$WAIT_FLAG"
+}
+function start_waiting {
+    echo 1 > "$WAIT_FLAG"
+}
+function wait {
+    start_waiting
+    sleep $1
+    stop_waiting
+}
+
 function start_pmdr {
     # Setting up initial values for work
     remaining_time=$full_time
     current_break=$short_break
     current_work=$work
     notification=$popup_start$work" minutes."
+    break_counter=0
 
+    start=$(date +%s)
     # Main loop
     while [[ $remaining_time -gt 0 ]]; do
         # If cycles end on break, expand work time to match remaining time
@@ -139,7 +153,43 @@ function start_pmdr {
         configure_music "-u $popups -v $volume -p $playlist"
 
         # Wait for the work cycle to end and update remaining time
-        sleep $((current_work * speed_debug))
+        wait $((current_work * speed_debug))&
+        cycle_start=$(date +%s)
+        cycle_end=$((cycle_start + current_work * speed_debug))
+        while [[ $(cat $WAIT_FLAG) == "1" ]]; do
+            now=$(date +%s)
+            
+            from_full_start=$(date -d@$((now - start)) -u \
+            +"Time passed since the start: %H:%M:%S")
+            
+            time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
+            +"Time remaining of your full work cycles: %H:%M:%S")
+
+            time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
+            +"Time remaining of work period: %H:%M:%S")
+
+            from_cycle_start=$(date -d@$((now - cycle_start)) -u \
+            +"Time passed since the start of work: %H:%M:%S")
+            
+            printf "\n%s\n" "$INFO_SEP"
+            printf "%s\n%s\n\n%s\n%s\n" \
+                            "$from_full_start" \
+                            "$time_full_remaining" \
+                            "$from_cycle_start" \
+                            "$time_cycle_remaining"
+            
+            printf "%s\n\n" "$INFO_SEP"
+
+            sleep 1
+            printf "\r"
+            i=0
+            while [[ i -lt 9 ]]; do
+                printf "\33[2K"
+                printf "\033[A"
+                _=$((i++))
+            done
+        done
+
         remaining_time=$((remaining_time-current_work))
 
         # Default end-of-time check
@@ -150,7 +200,7 @@ function start_pmdr {
         notify "$notification"
 
         _=$((break_counter++))
-        if [[ $((break_counter%4)) -ne 0 ]]; then
+        if [[ $((break_counter%3)) -ne 0 ]]; then
             current_break=$short_break
             play_phase_sfx 1
         else
@@ -158,7 +208,43 @@ function start_pmdr {
             play_phase_sfx 2
         fi
 
-        sleep $((current_break * speed_debug))
+        wait $((current_break * speed_debug))&
+        cycle_start=$(date +%s)
+        cycle_end=$((cycle_start + current_work * speed_debug))
+        while [[ $(cat $WAIT_FLAG) == "1" ]]; do
+            now=$(date +%s)
+            
+            from_full_start=$(date -d@$((now - start)) -u \
+            +"Time passed since the start: %H:%M:%S")
+            
+            time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
+            +"Time remaining of your full work cycles: %H:%M:%S")
+
+            time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
+            +"Time remaining of break period: %H:%M:%S")
+
+            from_cycle_start=$(date -d@$((now - cycle_start)) -u \
+            +"Time passed since the start of break: %H:%M:%S")
+
+            
+            printf "\n%s\n" "$INFO_SEP"
+            printf "%s\n%s\n\n%s\n%s\n" \
+                            "$from_full_start" \
+                            "$time_full_remaining" \
+                            "$from_cycle_start" \
+                            "$time_cycle_remaining"
+            
+            printf "%s\n\n" "$INFO_SEP"
+
+            sleep 1
+            printf "\r"
+            i=0
+            while [[ i -lt 9 ]]; do
+                printf "\33[2K"
+                printf "\033[A"
+                _=$((i++))
+            done
+        done
         remaining_time=$((remaining_time-current_break))
     done
     play_phase_sfx 3

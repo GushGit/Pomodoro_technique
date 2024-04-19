@@ -315,7 +315,7 @@ function get_playlist {
         # Calling combobox window to get playlist
         playlist=$(kdialog \
                         --combobox "Choose playlist for while you're working: " \
-                        $(ls playlists))
+                        $(ls $PLAYLISTS))
         exitcode=$?
 
         # Default exit-confirmation block

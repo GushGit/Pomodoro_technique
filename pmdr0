@@ -6,6 +6,8 @@
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/pmdr"
 source "$SCRIPT_DIR/pmdr_manager.sh"
 
+trap 'kill -9 $(pgrep "pmdr") &>/dev/null | kill -9 $(pgrep "play") &>/dev/null' SIGINT
+
 # Flag analyzer
 debug_flag=0
 fast_flag=0
