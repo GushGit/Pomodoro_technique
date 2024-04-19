@@ -186,7 +186,7 @@ function start_pmdr {
                             "$from_cycle_start" \
                             "$time_cycle_remaining"
             
-            printf "%s\n%s\n" \
+            printf "%s\n%s" \
                             "$INFO_BOX" \
                             "$INFO_CLR"
 
@@ -246,7 +246,7 @@ function start_pmdr {
                             "$from_cycle_start" \
                             "$time_cycle_remaining"
             
-            printf "%s\n%s\n" \
+            printf "%s\n%s" \
                             "$INFO_BOX" \
                             "$INFO_CLR"
 
