@@ -4,6 +4,7 @@
 #shellcheck disable=SC2046
 
 export SCRIPT_DIR
+source "$SCRIPT_DIR/math_utils.sh"
 
 # Initializing constants
 NULL="null"
@@ -16,7 +17,7 @@ SFX_SHORT=$SFX_DIR"short.wav"
 SFX_LONG=$SFX_DIR"long.wav"
 SFX_END=$SFX_DIR"end.wav"
 popup_flag=$NULL
-song_volume=0
+volume=0
 
 export playlist_len
 
@@ -25,7 +26,7 @@ function configure_music {
     for input in "$@"; do
         case $input in
             "-v") 
-                shift; song_volume=$1; shift;;
+                shift; volume=$1; shift;;
             "-u") 
                 shift; popup_flag=$1; shift;;
             "-p")
@@ -35,8 +36,10 @@ function configure_music {
         esac
     done
 
-    # Normalizing song_volume to the interval [0.0, 1.0]
-    song_volume="0$(bc<<<"scale=3;$song_volume/100.0")"
+    # Normalizing volume to the interval [0.0, 1.0]
+    if [[ $(is_bounded "$volume" 0 1) -eq 0 ]]; then
+        volume="0$(bc<<<"scale=3;$volume/100.0")"
+    fi
 
     playlist_dir="$SCRIPT_DIR/playlists/$playlist/"
     playlist_len="$(ls "$playlist_dir" | wc -l)"
@@ -98,7 +101,7 @@ function play_music () {
     fi
 
     # Play music and exit/continue recursion
-    play -v "$song_volume" "$playlist_dir$current_song.mp3"
+    play -v "$volume" "$playlist_dir$current_song.mp3"
     local exitcode=$?
     if [[ $exitcode -eq $ERROR ]]; then
         exit
