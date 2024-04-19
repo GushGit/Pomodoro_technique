@@ -37,7 +37,7 @@ function configure_music {
     done
 
     # Normalizing volume to the interval [0.0, 1.0]
-    if [[ $(is_bounded "$volume" 0 1) -eq 0 ]]; then
+    if [[ -z ${volume//[0-9]/} ]]; then
         volume="0$(bc<<<"scale=3;$volume/100.0")"
     fi
 
@@ -119,11 +119,11 @@ function play_phase_sfx {
         "0") 
             play -v 0.4 $SFX_START;;
         "1") 
-            play $SFX_SHORT;;
+            play -v 0.4 $SFX_SHORT;;
         "2") 
-            play $SFX_LONG;;
+            play -v 0.4 $SFX_LONG;;
         "3")
-            play $SFX_END;;
+            play -v 0.4 $SFX_END;;
         "*")
             echo "$0 received unconventional arguement, exiting..."; exit;;
     esac&
