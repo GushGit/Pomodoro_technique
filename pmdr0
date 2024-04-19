@@ -23,6 +23,6 @@ for input in "$@"; do
 done
 
 # Main functions
-set_up_work_mode
+set_up_work_mode 2>/dev/null
 
-start_pmdr
+start_pmdr 2>/dev/null

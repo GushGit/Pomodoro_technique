@@ -198,7 +198,7 @@ function start_pmdr {
                 _=$((i++))
             done
         done
-
+        
         remaining_time=$((remaining_time-current_work))
 
         # Default end-of-time check
@@ -224,16 +224,16 @@ function start_pmdr {
             now=$(date +%s)
             
             from_full_start=$(date -d@$((now - start)) -u \
-            +"Time passed since the start:              %H:%M:%S")
+            +"Time passed since the start:                  %H:%M:%S")
             
             time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
-            +"Time remaining of your full work cycles:  %H:%M:%S")
+            +"Time remaining of your full work cycles:      %H:%M:%S")
 
             time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
-            +"Time remaining of break period:           %H:%M:%S")
+            +"Time remaining of break period:               %H:%M:%S")
 
             from_cycle_start=$(date -d@$((now - cycle_start)) -u \
-            +"Time passed since the start of break:     %H:%M:%S")
+            +"Time passed since the start of break:         %H:%M:%S")
 
             
             printf "%s\n%s\n" \
