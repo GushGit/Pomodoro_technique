@@ -236,14 +236,19 @@ function start_pmdr {
             +"Time passed since the start of break:     %H:%M:%S")
 
             
-            printf "\n%s\n" "$INFO_SEP"
-            printf "%s\n%s\n\n%s\n%s\n" \
+            printf "%s\n%s\n" \
+                            "$INFO_CLR" \
+                            "$INFO_BOX"
+            printf "%s\n%s\n%s\n%s\n%s\n" \
                             "$from_full_start" \
                             "$time_full_remaining" \
+                            "$INFO_SEP" \
                             "$from_cycle_start" \
                             "$time_cycle_remaining"
             
-            printf "%s\n\n" "$INFO_SEP"
+            printf "%s\n%s\n" \
+                            "$INFO_BOX" \
+                            "$INFO_CLR"
 
             sleep $SPU
             printf "\r"
