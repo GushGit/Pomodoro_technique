@@ -193,7 +193,7 @@ function start_pmdr {
             sleep $SPU
             printf "\r"
             i=0
-            while [[ i -lt 9 ]]; do
+            while [[ i -lt 8 ]]; do
                 printf "\033[A"
                 _=$((i++))
             done
@@ -253,7 +253,7 @@ function start_pmdr {
             sleep $SPU
             printf "\r"
             i=0
-            while [[ i -lt 9 ]]; do
+            while [[ i -lt 8 ]]; do
                 printf "\033[A"
                 _=$((i++))
             done
