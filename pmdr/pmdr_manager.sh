@@ -144,6 +144,13 @@ function start_pmdr {
     start=$(date +%s)
     # Main loop
     while [[ $remaining_time -gt 0 ]]; do
+        _=$((break_counter++))
+        if [[ $((break_counter%3)) -ne 0 ]]; then
+            current_break=$short_break
+        else
+            current_break=$long_break
+        fi
+
         # If cycles end on break, expand work time to match remaining time
         if [[ $remaining_time -le $((work+current_break)) ]]; then
             current_work=$remaining_time;
@@ -208,7 +215,6 @@ function start_pmdr {
         notification=$popup_break$current_break" minutes."
         notify "$notification"
 
-        _=$((break_counter++))
         if [[ $((break_counter%3)) -ne 0 ]]; then
             current_break=$short_break
             play_phase_sfx 1
