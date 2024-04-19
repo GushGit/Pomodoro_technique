@@ -180,7 +180,7 @@ function start_pmdr {
             
             printf "%s\n\n" "$INFO_SEP"
 
-            sleep 1
+            sleep 30
             printf "\r"
             i=0
             while [[ i -lt 9 ]]; do
@@ -236,7 +236,7 @@ function start_pmdr {
             
             printf "%s\n\n" "$INFO_SEP"
 
-            sleep 1
+            sleep 30
             printf "\r"
             i=0
             while [[ i -lt 9 ]]; do
