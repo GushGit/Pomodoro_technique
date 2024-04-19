@@ -13,6 +13,9 @@ export debug_flag
 export fast_flag
 
 TITLE="pmdr0"
+INFO_SEP="-----=====-----"
+# Seconds Per Update
+SPU=10
 export TEMPLATES_DB
 
 speed_debug=60
@@ -160,16 +163,16 @@ function start_pmdr {
             now=$(date +%s)
             
             from_full_start=$(date -d@$((now - start)) -u \
-            +"Time passed since the start: %H:%M:%S")
+            +"Time passed since the start:              %H:%M:%S")
             
             time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
-            +"Time remaining of your full work cycles: %H:%M:%S")
+            +"Time remaining of your full work cycles:  %H:%M:%S")
 
             time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
-            +"Time remaining of work period: %H:%M:%S")
+            +"Time remaining of work period:            %H:%M:%S")
 
             from_cycle_start=$(date -d@$((now - cycle_start)) -u \
-            +"Time passed since the start of work: %H:%M:%S")
+            +"Time passed since the start of work:      %H:%M:%S")
             
             printf "\n%s\n" "$INFO_SEP"
             printf "%s\n%s\n\n%s\n%s\n" \
@@ -180,7 +183,7 @@ function start_pmdr {
             
             printf "%s\n\n" "$INFO_SEP"
 
-            sleep 30
+            sleep $SPU
             printf "\r"
             i=0
             while [[ i -lt 9 ]]; do
@@ -215,16 +218,16 @@ function start_pmdr {
             now=$(date +%s)
             
             from_full_start=$(date -d@$((now - start)) -u \
-            +"Time passed since the start: %H:%M:%S")
+            +"Time passed since the start:              %H:%M:%S")
             
             time_full_remaining=$(date -d@$((start + full_time * speed_debug - now)) -u \
-            +"Time remaining of your full work cycles: %H:%M:%S")
+            +"Time remaining of your full work cycles:  %H:%M:%S")
 
             time_cycle_remaining=$(date -d@$((cycle_end - now)) -u \
-            +"Time remaining of break period: %H:%M:%S")
+            +"Time remaining of break period:           %H:%M:%S")
 
             from_cycle_start=$(date -d@$((now - cycle_start)) -u \
-            +"Time passed since the start of break: %H:%M:%S")
+            +"Time passed since the start of break:     %H:%M:%S")
 
             
             printf "\n%s\n" "$INFO_SEP"
@@ -236,7 +239,7 @@ function start_pmdr {
             
             printf "%s\n\n" "$INFO_SEP"
 
-            sleep 30
+            sleep $SPU
             printf "\r"
             i=0
             while [[ i -lt 9 ]]; do
